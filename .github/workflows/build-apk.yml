@@ -22,15 +22,21 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Unzip Project if Needed and Build
+      - name: Organize Files and Build APK
         run: |
+          if [ -d "ReelMonster-Android" ]; then
+            cp -r ReelMonster-Android/* .
+          fi
           if [ -f "ReelMonster-Android-Project.zip" ]; then
             unzip -o ReelMonster-Android-Project.zip
+            if [ -d "ReelMonster-Android" ]; then
+              cp -r ReelMonster-Android/* .
+            fi
           fi
-          # Check where build.gradle is located and move into it
-          if [ -d "ReelMonster-Android" ]; then
-            cd ReelMonster-Android
-          fi
+          
+          echo "Current directory structure:"
+          ls -la
+          
           gradle assembleDebug --no-daemon
 
       - name: Upload Installable APK
