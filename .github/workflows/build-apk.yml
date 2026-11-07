@@ -22,20 +22,15 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Find Project and Build APK
+      - name: Unzip Project if Needed and Build
         run: |
-          PROJECT_DIR=$(dirname $(find . -name "settings.gradle" -not -path "*/.*" | head -n 1))
-          if [ -z "$PROJECT_DIR" ] || [ "$PROJECT_DIR" = "." ]; then
-            if [ -f "ReelMonster-Android-Project.zip" ]; then
-              unzip -o ReelMonster-Android-Project.zip
-              PROJECT_DIR="ReelMonster-Android"
-            else
-              echo "Error: settings.gradle not found!"
-              exit 1
-            fi
+          if [ -f "ReelMonster-Android-Project.zip" ]; then
+            unzip -o ReelMonster-Android-Project.zip
           fi
-          echo "Building from directory: $PROJECT_DIR"
-          cd "$PROJECT_DIR"
+          # Check where build.gradle is located and move into it
+          if [ -d "ReelMonster-Android" ]; then
+            cd ReelMonster-Android
+          fi
           gradle assembleDebug --no-daemon
 
       - name: Upload Installable APK
